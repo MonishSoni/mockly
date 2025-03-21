@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -10,8 +10,33 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import Interviewer from './Interviewer'
 import { Button } from './ui/button'
+import { DialogClose } from '@radix-ui/react-dialog'
+import { useMutation } from 'convex/react'
+import { api } from '@/convex/_generated/api'
+import { LoaderCircle } from 'lucide-react'
 
 const UserInputDialog = ({ children }) => {
+
+    const [selectedExpert, setSelectedExpert] = useState()
+    const [topic, setTopic] = useState()
+    const [loading, setLoading] = useState(false)
+    const [openDialog, setOpenDialog] = useState(false)
+
+    const createDiscussionRoom = useMutation(api.DiscussionRoom.createNewRoom)
+
+    const onNextClick = async () => {
+        setLoading(true)
+        const result = await createDiscussionRoom({
+            topic: topic,
+            expertName: selectedExpert
+        })
+        setLoading(false)
+        setOpenDialog(false)
+        console.log('pushed')
+    }
+
+    console.log(selectedExpert)
+    console.log(topic)
 
     const interviewerData = [
         {
@@ -30,17 +55,19 @@ const UserInputDialog = ({ children }) => {
 
     return (
         <div>
-            <Dialog>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogTrigger>{children}</DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Get Started with Your Interview</DialogTitle>
                         <DialogDescription>
                             <div>
-                                <p className='mb-2'>  Please provide the topics or areas you'd like to focus on for your interview.
+                                <span className='mb-2 block'>  Please provide the topics or areas you'd like to focus on for your interview.
                                     This could include specific skills, job roles, or industries. Once you're done, select an instructor and start your mock interview
-                                </p>
-                                <Textarea />
+                                </span>
+                                <Textarea placeholder="Enter the topic for mock interview" className='mt-4 resize-none min-h-25'
+                                    onChange={(e) => setTopic(e.target.value)}
+                                />
                                 <p className='text-sm text-gray-600 mt-3.5'>Choose an expert to conduct your interview</p>
                                 <div className='mt-1.5 flex gap-5 justify-start items-center'>
                                     {/* Map through the interviewerData and display each interviewer */}
@@ -49,13 +76,17 @@ const UserInputDialog = ({ children }) => {
                                             key={index}
                                             name={interviewer.name}
                                             image={interviewer.image}
+                                            selectexp={selectedExpert}
+                                            setselectedexp={setSelectedExpert}
                                         />
                                     ))}
                                 </div>
 
                                 <div className='flex justify-end items-center gap-2 mt-2'>
-                                    <Button className='cursor-pointer'>Cancel</Button>
-                                    <Button className='cursor-pointer'>Start</Button>
+                                    <DialogClose asChild>
+                                        <Button className='cursor-pointer'>Cancel</Button>
+                                    </DialogClose>
+                                    <Button disabled={(!topic || !selectedExpert || loading)} onClick={onNextClick} className='cursor-pointer'> {loading && <LoaderCircle />} Start</Button>
                                 </div>
                             </div>
 
