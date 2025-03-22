@@ -16,7 +16,7 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { LoaderCircle } from 'lucide-react'
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 
 const UserInputDialog = ({ children }) => {
@@ -39,8 +39,10 @@ const UserInputDialog = ({ children }) => {
         setOpenDialog(false)
         setSelectedExpert('')
         setTopic('')
+        console.log(`hii - ${result}`)
         router.push('/discussion-room/' + result)
-        console.log('pushed')
+
+
     }
 
     console.log(selectedExpert)
@@ -68,7 +70,7 @@ const UserInputDialog = ({ children }) => {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Get Started with Your Interview</DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription asChild>
                             <div>
                                 <span className='mb-2 block'>  Please provide the topics or areas you'd like to focus on for your interview.
                                     This could include specific skills, job roles, or industries. Once you're done, select an instructor and start your mock interview
