@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react'
 import {
     Dialog,
@@ -14,6 +16,8 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { LoaderCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'; 
+
 
 const UserInputDialog = ({ children }) => {
 
@@ -21,6 +25,7 @@ const UserInputDialog = ({ children }) => {
     const [topic, setTopic] = useState()
     const [loading, setLoading] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
+    const router = useRouter()
 
     const createDiscussionRoom = useMutation(api.DiscussionRoom.createNewRoom)
 
@@ -32,6 +37,9 @@ const UserInputDialog = ({ children }) => {
         })
         setLoading(false)
         setOpenDialog(false)
+        setSelectedExpert('')
+        setTopic('')
+        router.push('/discussion-room/' + result)
         console.log('pushed')
     }
 
